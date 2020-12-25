@@ -9,6 +9,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 sh "docker build -t engineer365/fleashop-server:${env.BUILD_ID} ."
+
             }
         }
     }
