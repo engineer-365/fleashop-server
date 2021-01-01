@@ -26,7 +26,7 @@ FROM openjdk:11.0.9.1-jdk
 WORKDIR /opt
 EXPOSE 8080
 
-COPY target/*.jar ./server.jar
+COPY target/*-SNAPSHOT.jar ./server.jar
 
 ENV SPRING_PROFILES_ACTIVE default
 
