@@ -51,7 +51,7 @@ pipeline {
                 // }
 
                 // "javadoc" plugin
-                javadoc()
+                // javadoc javadocDir: "", keepAll: "true"
             }
         }
         // stage('Build Image') {
