@@ -27,6 +27,25 @@ pipeline {
                 sh './mvnw verify'
             }
         }
+        stage('Quality') {
+           // See：
+            //   - https://www.jenkins.io/doc/pipeline/steps/jacoco/
+            //   - https://stackoverflow.com/questions/24077392/how-to-get-jenkins-to-exclude-entire-folders-from-code-coverage/48685604#48685604
+            //   - https://testerhome.com/topics/10091 (Chinese)
+            //   - https://www.cnblogs.com/yanxinjiang/p/10968297.html (Chinese)
+            jacoco(
+                execPattern: 'target/**/*.exec '
+            )
+            //withSonarQubeEnv('SonarQube') {
+            //    sh "${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+            //    -Dsonar.projectKey=springboot-demo \
+            //    -Dsonar.projectName=springboot-demo \
+            //    -Dsonar.sources=.\
+            //    -Dsonar.host.url=SonarQube地址 \
+            //    -Dsonar.language=java \
+            //    -Dsonar.sourceEncoding=UTF-8"
+           // }
+        }
         // stage('Build Image') {
         //    when {
         //        branch 'main'
@@ -38,7 +57,14 @@ pipeline {
     }
     post {
         always {
-            junit 'target/surefire-reports/**/*.xml'
+            junit (
+                testResults: "**/target/surefire-reports/**/*.xml"
+                allowEmptyResults: true
+                keepLongStdio: true
+            )
+        }
+        success {
+
         }
     }
 }
