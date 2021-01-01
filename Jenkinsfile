@@ -65,8 +65,5 @@ pipeline {
                 keepLongStdio: true
             )
         }
-        success {
-
-        }
     }
 }
