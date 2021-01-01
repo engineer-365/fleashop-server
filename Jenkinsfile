@@ -15,10 +15,6 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                preBuildCleanup { // Clean before build
-                    includePattern('target/**')
-                    deleteDirectories()
-                }
                 sh './mvnw -B -DskipTests clean package'
             }
         }
