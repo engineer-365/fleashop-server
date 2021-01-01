@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Integration Test') {
             steps {
-                sh './mvnw -DskipTests clean verify -DskipITs=false'
+                sh './mvnw -DskipTests -DskipITs=false verify'
             }
         }
         // stage('Build Image') {
