@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        // Use pipeline-utility-steps plugin to read information from pom.xml into env variables
+        // "pipeline-utility-steps": read information from pom.xml into env variables
         // See 
         //  - https://github.com/jenkinsci/pipeline-utility-steps-plugin/blob/master/docs/STEPS.md
         //  - https://www.jenkins.io/doc/pipeline/steps/pipeline-utility-steps/
@@ -30,7 +30,8 @@ pipeline {
         }
         stage('Quality') {
             steps {
-            // See：
+                // "jacoco" plugin
+                // See：
                 //   - https://www.jenkins.io/doc/pipeline/steps/jacoco/
                 //   - https://stackoverflow.com/questions/24077392/how-to-get-jenkins-to-exclude-entire-folders-from-code-coverage/48685604#48685604
                 //   - https://testerhome.com/topics/10091 (Chinese)
@@ -60,6 +61,7 @@ pipeline {
     }
     post {
         always {
+            // "junit" plugin
             junit (
                 testResults: "**/target/surefire-reports/**/*.xml",
                 allowEmptyResults: true,
@@ -76,7 +78,7 @@ pipeline {
             recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
 
             // "git-forensics" plugin
-            mineRepository
+            mineRepository()
         }
     }
 }
