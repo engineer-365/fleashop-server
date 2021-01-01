@@ -39,6 +39,7 @@ pipeline {
                 jacoco(
                     execPattern: 'target/**/*.exec '
                 )
+
                 //withSonarQubeEnv('SonarQube') {
                 //    sh "${SONAR_SCANNER_HOME}/bin/sonar-scanner \
                 //    -Dsonar.projectKey=springboot-demo \
@@ -47,7 +48,10 @@ pipeline {
                 //    -Dsonar.host.url=SonarQube地址 \
                 //    -Dsonar.language=java \
                 //    -Dsonar.sourceEncoding=UTF-8"
-            // }
+                // }
+
+                // "javadoc" plugin
+                javadoc()
             }
         }
         // stage('Build Image') {
