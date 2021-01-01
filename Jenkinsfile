@@ -74,6 +74,9 @@ pipeline {
             recordIssues enabledForFailure: true, tool: spotBugs()
             recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
             recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
+
+            // "git-forensics" plugin
+            mineRepository
         }
     }
 }
