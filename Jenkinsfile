@@ -1,17 +1,30 @@
 pipeline {
     agent any
+    environment {
+        //Use Pipeline Utility Steps plugin to read information from pom.xml into env variables
+        IMAGE = readMavenPom().getArtifactId()
+        VERSION = readMavenPom().getVersion()
+    }
     stages {
-        stage('Test') {
-            steps {
-                sh './mvnw clean && ./mvnw verify'
-
+        stage('Build') {
+            steps {                
+                sh './mvnw -B -DskipTests clean package'
             }
         }
-        stage('Build Image') {
+        stage('Unit Test') {
             steps {
-                sh "docker build -t engineer365/fleashop-server:${env.BUILD_ID} ."
-                
+                sh './mvnw test'
             }
         }
+        stage('Integration Test') {
+            steps {
+                sh './mvnw -DskipTests clean verify -DskipITs=false'
+            }
+        }
+        // stage('Build Image') {
+        //    steps {
+                // sh "docker build -t engineer365/fleashop-server:${env.BUILD_ID} ."
+        //    }
+        //}
     }
 }
