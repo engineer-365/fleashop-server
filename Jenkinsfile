@@ -1,13 +1,28 @@
 pipeline {
     agent any
     environment {
-        //Use Pipeline Utility Steps plugin to read information from pom.xml into env variables
-        IMAGE = readMavenPom().getArtifactId()
-        VERSION = readMavenPom().getVersion()
+        // Use pipeline-utility-steps plugin to read information from pom.xml into env variables
+        // See 
+        //  - https://github.com/jenkinsci/pipeline-utility-steps-plugin/blob/master/docs/STEPS.md
+        //  - https://www.jenkins.io/doc/pipeline/steps/pipeline-utility-steps/
+        // For waht readMavenPom() returns, see:
+        //  - http://maven.apache.org/components/ref/3.3.9/maven-model/apidocs/org/apache/maven/model/Model.html
+        ARTIFACTOR_ID = readMavenPom().getArtifactId() // fleashop-server
+        VERSION = readMavenPom().getVersion() // 0.0.1-SNAPSHOT
+        BUILD = getBuild()
+        GROUP_ID = getGroupId() // org.engineer365
+        ID = getId() //
+        ORG = getOrganization()
     }
     stages {
         stage('Build') {
-            steps {                
+            steps {
+                echo "ARTIFACTOR_ID: ${ARTIFACTOR_ID}" 
+                echo "VERSION: ${VERSION}" 
+                echo "BUILD: ${BUILD}" 
+                echo "GROUP_ID: ${GROUP_ID}" 
+                echo "ID: ${ID}" 
+                echo "ORG: ${ORG}" 
                 sh './mvnw -B -DskipTests clean package'
             }
         }

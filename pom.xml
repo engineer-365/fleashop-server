@@ -8,9 +8,9 @@
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>org.engineer365</groupId>
-  <artifactId>fleashop</artifactId>
+  <artifactId>fleashop-server</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>fleashop</name>
+  <name>fleashop-server</name>
   <description>Demo project for Spring Boot</description>
 
   <properties>
