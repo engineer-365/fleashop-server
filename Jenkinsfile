@@ -16,10 +16,13 @@ pipeline {
     options {
         skipStagesAfterUnstable()
         timestamps()
+        ansiColor('xterm') // https://plugins.jenkins.io/ansicolor/
     }
     stages {
         stage('Build') {
             steps {
+                echo '\033[34mHello\033[0m \033[33mcolorful\033[0m \033[35mworld!\033[0m'
+                
                 sh './mvnw -B -DskipTests clean package'
             }
         }
