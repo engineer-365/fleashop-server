@@ -8,13 +8,14 @@ pipeline {
         // For waht readMavenPom() returns, see:
         //  - http://maven.apache.org/components/ref/3.3.9/maven-model/apidocs/org/apache/maven/model/Model.html
         pom = readMavenPom()
-        ARTIFACTOR_ID = pom.getArtifactId() // fleashop-server
-        VERSION = pom.getVersion() // 0.0.1-SNAPSHOT
-        GROUP_ID = pom.getGroupId() // org.engineer365
+
+        ARTIFACTOR_ID = pom.getArtifactId()
+        VERSION = pom.getVersion()
+        GROUP_ID = pom.getGroupId()
     }
     options {
-        skipStagesAfterUnstable() // 一旦构建状态变得UNSTABLE，跳过该阶段
-        timestamps() // 为控制台输出增加时间戳
+        skipStagesAfterUnstable()
+        timestamps()
     }
     stages {
         stage('Build') {
@@ -64,6 +65,15 @@ pipeline {
                 allowEmptyResults: true,
                 keepLongStdio: true
             )
+
+            // "warnings-ng" plugin
+            // https://github.com/jenkinsci/warnings-ng-plugin/blob/master/doc/Documentation.md#pipeline-configuration
+            // https://github.com/jenkinsci/warnings-ng-plugin/blob/master/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java
+            recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+            recordIssues enabledForFailure: true, tool: checkStyle()
+            //recordIssues enabledForFailure: true, tool: spotBugs()
+            //recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+            //recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
         }
     }
 }
