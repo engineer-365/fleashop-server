@@ -12,7 +12,6 @@ pipeline {
         BUILD = getBuild()
         GROUP_ID = getGroupId() // org.engineer365
         ID = getId() //
-        ORG = getOrganization()
     }
     stages {
         stage('Build') {
