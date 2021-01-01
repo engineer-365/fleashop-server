@@ -9,7 +9,6 @@ pipeline {
         //  - http://maven.apache.org/components/ref/3.3.9/maven-model/apidocs/org/apache/maven/model/Model.html
         ARTIFACTOR_ID = readMavenPom().getArtifactId() // fleashop-server
         VERSION = readMavenPom().getVersion() // 0.0.1-SNAPSHOT
-        BUILD = getBuild()
         GROUP_ID = getGroupId() // org.engineer365
         ID = getId() //
     }
@@ -18,10 +17,8 @@ pipeline {
             steps {
                 echo "ARTIFACTOR_ID: ${ARTIFACTOR_ID}" 
                 echo "VERSION: ${VERSION}" 
-                echo "BUILD: ${BUILD}" 
                 echo "GROUP_ID: ${GROUP_ID}" 
-                echo "ID: ${ID}" 
-                echo "ORG: ${ORG}" 
+                echo "ID: ${ID}"
                 sh './mvnw -B -DskipTests clean package'
             }
         }
