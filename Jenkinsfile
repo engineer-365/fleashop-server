@@ -16,6 +16,7 @@ pipeline {
     options {
         skipStagesAfterUnstable()
         timestamps()
+        chucknorris()
         ansiColor('xterm') // https://plugins.jenkins.io/ansicolor/
     }
     stages {
