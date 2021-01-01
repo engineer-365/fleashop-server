@@ -10,7 +10,6 @@ pipeline {
         ARTIFACTOR_ID = readMavenPom().getArtifactId() // fleashop-server
         VERSION = readMavenPom().getVersion() // 0.0.1-SNAPSHOT
         GROUP_ID = getGroupId() // org.engineer365
-        ID = getId() //
     }
     stages {
         stage('Build') {
@@ -18,7 +17,6 @@ pipeline {
                 echo "ARTIFACTOR_ID: ${ARTIFACTOR_ID}" 
                 echo "VERSION: ${VERSION}" 
                 echo "GROUP_ID: ${GROUP_ID}" 
-                echo "ID: ${ID}"
                 sh './mvnw -B -DskipTests clean package'
             }
         }
