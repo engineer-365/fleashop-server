@@ -22,12 +22,7 @@ pipeline {
                 sh './mvnw -B -DskipTests clean package'
             }
         }
-        stage('Unit Test') {
-            steps {
-                sh './mvnw test'
-            }
-        }
-        stage('Integration Test') {
+        stage('Test') {
             steps {
                 sh './mvnw verify'
             }
@@ -43,7 +38,7 @@ pipeline {
     }
     post {
         always {
-            junit 'target/surefile-reports/**/*.xml'
+            junit 'target/surefire-reports/**/*.xml'
         }
     }
 }
