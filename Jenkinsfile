@@ -21,7 +21,6 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                chucknorris()
                 sh './mvnw -B -DskipTests clean package'
             }
         }
@@ -67,6 +66,9 @@ pipeline {
     }
     post {
         always {
+            // "chucknorris" plugin
+            chuckNorris()
+
             // "junit" plugin
             junit (
                 testResults: "**/target/surefire-reports/**/*.xml",
