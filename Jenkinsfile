@@ -12,6 +12,10 @@ pipeline {
         VERSION = pom.getVersion() // 0.0.1-SNAPSHOT
         GROUP_ID = pom.getGroupId() // org.engineer365
     }
+    options {
+        skipStagesAfterUnstable() // 一旦构建状态变得UNSTABLE，跳过该阶段
+        timestamps() // 为控制台输出增加时间戳
+    }
     stages {
         stage('Build') {
             steps {
@@ -29,9 +33,17 @@ pipeline {
             }
         }
         // stage('Build Image') {
+        //    when {
+        //        branch 'main'
+        //    }
         //    steps {
                 // sh "docker build -t engineer365/fleashop-server:${env.BUILD_ID} ."
         //    }
         //}
+    }
+    post {
+        always {
+            junit 'target/surefile-reports/**/*.xml'
+        }
     }
 }
