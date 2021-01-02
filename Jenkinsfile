@@ -16,7 +16,6 @@ pipeline {
     options {
         skipStagesAfterUnstable()
         timestamps()
-        ansiColor('xterm') // https://plugins.jenkins.io/ansicolor/
     }
     stages {
         stage('Build') {
@@ -80,10 +79,10 @@ pipeline {
             // https://github.com/jenkinsci/warnings-ng-plugin/blob/master/doc/Documentation.md#pipeline-configuration
             // https://github.com/jenkinsci/warnings-ng-plugin/blob/master/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java
             recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
-            recordIssues enabledForFailure: true, tool: checkStyle()
-            recordIssues enabledForFailure: true, tool: spotBugs()
-            recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
-            recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
+            // recordIssues enabledForFailure: true, tool: checkStyle()
+            // recordIssues enabledForFailure: true, tool: spotBugs()
+            // recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+            // recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
 
             // "git-forensics" plugin
             mineRepository()
