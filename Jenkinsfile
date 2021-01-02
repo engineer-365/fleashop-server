@@ -13,9 +13,16 @@ pipeline {
         //  - http://maven.apache.org/components/ref/3.3.9/maven-model/apidocs/org/apache/maven/model/Model.html
         pom = readMavenPom()
 
-        ARTIFACTOR_ID = pom.getArtifactId()
-        VERSION = pom.getVersion()
-        GROUP_ID = pom.getGroupId()
+        PRJ_ID = pom.getArtifactId()
+        PRJ_VER = pom.getVersion()
+        ORG_ID = pom.getGroupId()
+
+        COMMIT_ID = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+
+        DOCKER_REG = 'docker.engineer365.org:40443'
+        DOCKER_REG_CRED = 'engineer365-builder@docker.engineer365.org'
+
+        K8S_GIT = "github.com/${GROUP_ID}/${ARTIFACTOR_ID}-k8s.git"
     }
     options {
         skipStagesAfterUnstable()
@@ -65,14 +72,13 @@ pipeline {
         //    }
             steps {
                 script {
-                    def image = docker.build("${GROUP_ID}/${ARTIFACTOR_ID}")
-                    docker.withRegistry(credentialsId: 'engineer365-builder@docker.engineer365.org', url: 'https://docker.engineer365.org:40443') {
-                        // some block
-                        image.push
-                        image.push("latest")
+                    //def commitId = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+                    docker.withRegistry("https://" + DOCKER_REG, DOCKER_REG_CRED) {
+                        dockerImage = docker.build("${DOCKER_REG}/${ORG_ID}/${PRJ_ID}", "-f Dockerfile .")
+                        dockerImage.push("${PRJ_VER}-${COMMIT_ID}-${env.BUILD_ID}")
+                        dockerImage.push("latest")
                     }
                 }
-                // sh "docker build -t engineer365/fleashop-server:${env.BUILD_ID} ."
             }
         }
     }

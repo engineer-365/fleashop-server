@@ -7,7 +7,7 @@
     <version>2.4.0</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
-  <groupId>org.engineer365</groupId>
+  <groupId>engineer-365</groupId>
   <artifactId>fleashop-server</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>fleashop-server</name>
