@@ -60,18 +60,19 @@ pipeline {
                     execPattern: 'target/**/*.exec '
                 )
 
-                //withSonarQubeEnv('SonarQube') {
-                //    sh "${SONAR_SCANNER_HOME}/bin/sonar-scanner \
-                //    -Dsonar.projectKey=springboot-demo \
-                //    -Dsonar.projectName=springboot-demo \
-                //    -Dsonar.sources=.\
-                //    -Dsonar.host.url=SonarQube地址 \
-                //    -Dsonar.language=java \
-                //    -Dsonar.sourceEncoding=UTF-8"
-                // }
+                /*withSonarQubeEnv('SonarQube') {
+                    sh "${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+                    -Dsonar.projectKey=springboot-demo \
+                    -Dsonar.projectName=springboot-demo \
+                    -Dsonar.sources=.\
+                    -Dsonar.host.url=SonarQube-host \
+                    -Dsonar.language=java \
+                    -Dsonar.sourceEncoding=UTF-8"
+                }
 
                 // "javadoc" plugin
-                // javadoc javadocDir: "", keepAll: "true"
+                javadoc javadocDir: "", keepAll: "true"
+                */
             }
         }
         stage('Build Image') {
@@ -88,6 +89,31 @@ pipeline {
                     }
                 }
             }
+        }
+        /*stage('Deploy') {
+        //    when {
+        //        branch 'main'
+        //    }
+            withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
+                sshPublisher(
+                    failOnError: true,
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: 'staging',
+                            sshCredentials: [
+                                username: 'cloud_user',
+                                encryptedPassphrase: "$USERPASS"
+                            ], 
+                            transfers: [
+                                sshTransfer(
+                                    sourceFiles: 'src/**',
+                                    removePrefix: 'src/'
+                                )
+                            ]
+                        )
+                    ]
+                )
+            }*/
         }
     }
     post {
@@ -112,6 +138,7 @@ pipeline {
             // recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
 
             // "git-forensics" plugin
+            // TODO: not yet enabled, actually
             mineRepository()
         }
     }
