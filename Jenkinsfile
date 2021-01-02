@@ -1,3 +1,5 @@
+// https://builder.engineer365.org:40443/pipeline-syntax/
+
 pipeline {
     agent any
     environment {
@@ -62,6 +64,11 @@ pipeline {
                 // sh "docker build -t engineer365/fleashop-server:${env.BUILD_ID} ."
         //    }
         //}
+
+        stage('Finish') {
+            // "log-parser" plugin
+            logParser failBuildOnError: true, showGraphs: true, useProjectRule: true
+        }
     }
     post {
         always {
