@@ -64,11 +64,13 @@ pipeline {
         //        branch 'main'
         //    }
             steps {
-                image = docker.build(image: "${GROUP_ID}/${ARTIFACTOR_ID}")
-                docker.withRegistry(credentialsId: 'engineer365-builder@docker.engineer365.org', url: 'https://docker.engineer365.org:40443') {
-                    // some block
-                    image.push
-                    image.push("latest")
+                script {
+                    def image = docker.build(image: "${GROUP_ID}/${ARTIFACTOR_ID}")
+                    docker.withRegistry(credentialsId: 'engineer365-builder@docker.engineer365.org', url: 'https://docker.engineer365.org:40443') {
+                        // some block
+                        image.push
+                        image.push("latest")
+                    }
                 }
                 // sh "docker build -t engineer365/fleashop-server:${env.BUILD_ID} ."
             }
