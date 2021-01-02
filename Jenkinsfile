@@ -66,8 +66,10 @@ pipeline {
         //}
 
         stage('Finish') {
-            // "log-parser" plugin
-            logParser failBuildOnError: true, showGraphs: true, useProjectRule: true
+            steps {
+                // "log-parser" plugin
+                logParser failBuildOnError: true, showGraphs: true, useProjectRule: true
+            }
         }
     }
     post {
