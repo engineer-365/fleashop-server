@@ -21,7 +21,7 @@ pipeline {
 
         DOCKER_REG = 'docker.engineer365.org:40443'
         DOCKER_REG_CRED = 'engineer365-builder@docker.engineer365.org'
-        DOCKER_PRJ_FQ = "${DOCKER_REG}/${ORG_ID}/${PRJ_ID}"
+        DOCKER_PRJ = "${ORG_ID}/${PRJ_ID}"
         DOCKER_IMG_VER = "${PRJ_VER}-${COMMIT_ID}-${env.BUILD_ID}"
 
         K8S_GIT = "github.com/${GROUP_ID}/${ARTIFACTOR_ID}-k8s.git"
@@ -31,9 +31,14 @@ pipeline {
         timestamps()
     }
     stages {
-        stage('Build') {
+        stage('Clean') {
             steps {
-                sh './mvnw -B -DskipTests clean package'
+                sh './mvnw clean'
+            }
+        }
+        stage('Compile') {
+            steps {
+                sh './mvnw compile'
             }
         }
         stage('Test') {
@@ -75,8 +80,10 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("https://" + DOCKER_REG, DOCKER_REG_CRED) {
-                        def dockerImage = docker.build(DOCKER_PRJ_FQ, "-f Dockerfile .")
-                        dockerImage.push("${DOCKER_PRJ_FQ}:${DOCKER_IMG_VER}")
+                        docker.build("${DOCKER_REG}/${DOCKER_PRJ}", "-f Dockerfile .")
+                        
+                        def dockerImage = docker.image(DOCKER_PRJ)
+                        dockerImage.push(DOCKER_IMG_VER)
                         dockerImage.push("latest")
                     }
                 }
