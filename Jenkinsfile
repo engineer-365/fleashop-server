@@ -79,12 +79,14 @@ pipeline {
         //        branch 'main'
         //    }
             steps {
-                docker.withRegistry("https://" + DOCKER_REG, DOCKER_REG_CRED) {
-                    sh "docker build ${DOCKER_PRJ_FQ}:latest -f Dockerfile ."
-                    sh "docker tag ${DOCKER_PRJ_FQ}:latest ${DOCKER_PRJ_FQ}:${DOCKER_IMG_VER}"
-                    sh "docker push ${DOCKER_PRJ_FQ}:${DOCKER_IMG_VER}"
-                    sh "docker push ${DOCKER_PRJ_FQ}:latest"
+                script {
+                    docker.withRegistry("https://" + DOCKER_REG, DOCKER_REG_CRED) {}
                 }
+
+                sh "docker build ${DOCKER_PRJ_FQ}:latest -f Dockerfile ."
+                sh "docker tag ${DOCKER_PRJ_FQ}:latest ${DOCKER_PRJ_FQ}:${DOCKER_IMG_VER}"
+                sh "docker push ${DOCKER_PRJ_FQ}:${DOCKER_IMG_VER}"
+                sh "docker push ${DOCKER_PRJ_FQ}:latest"
             }
         }
     }
