@@ -1,4 +1,6 @@
-// https://builder.engineer365.org:40443/pipeline-syntax/
+// See
+//  - https://www.jenkins.io/doc/book/pipeline/
+//  - https://builder.engineer365.org:40443/pipeline-syntax/
 
 pipeline {
     agent any
@@ -28,6 +30,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh './mvnw verify'
+                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
             }
         }
         stage('Quality') {
@@ -56,19 +59,18 @@ pipeline {
                 // javadoc javadocDir: "", keepAll: "true"
             }
         }
-        // stage('Build Image') {
+        stage('Build Image') {
         //    when {
         //        branch 'main'
         //    }
-        //    steps {
-                // sh "docker build -t engineer365/fleashop-server:${env.BUILD_ID} ."
-        //    }
-        //}
-
-        stage('Finish') {
             steps {
-                // "log-parser" plugin
-                logParser failBuildOnError: true, showGraphs: true, useProjectRule: false
+                image = docker.build(image: "${GROUP_ID}/${ARTIFACTOR_ID}")
+                docker.withRegistry(credentialsId: 'engineer365-builder@docker.engineer365.org', url: 'https://docker.engineer365.org:40443') {
+                    // some block
+                    image.push
+                    image.push("latest")
+                }
+                // sh "docker build -t engineer365/fleashop-server:${env.BUILD_ID} ."
             }
         }
     }
