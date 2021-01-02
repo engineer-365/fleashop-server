@@ -80,9 +80,9 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("https://" + DOCKER_REG, DOCKER_REG_CRED) {
-                        docker.build("${DOCKER_REG}/${DOCKER_PRJ}:latest", "-f Dockerfile .")
+                        docker.build("${DOCKER_REG}/${DOCKER_PRJ}", "-f Dockerfile .")
                         
-                        def dockerImage = docker.image(DOCKER_PRJ)
+                        def dockerImage = docker.image("${DOCKER_REG}/${DOCKER_PRJ}")
                         dockerImage.push(DOCKER_IMG_VER)
                         dockerImage.push("latest")
                     }
