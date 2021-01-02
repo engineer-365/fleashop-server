@@ -65,7 +65,7 @@ pipeline {
         //    }
             steps {
                 script {
-                    def image = docker.build(image: "${GROUP_ID}/${ARTIFACTOR_ID}")
+                    def image = docker.build("${GROUP_ID}/${ARTIFACTOR_ID}")
                     docker.withRegistry(credentialsId: 'engineer365-builder@docker.engineer365.org', url: 'https://docker.engineer365.org:40443') {
                         // some block
                         image.push
