@@ -26,7 +26,7 @@ pipeline {
         DOCKER_PRJ_FQ = "${DOCKER_REG}/${DOCKER_PRJ}"
         DOCKER_IMG_VER = "${PRJ_VER}-${COMMIT_ID}-${env.BUILD_ID}"
 
-        K8S_GIT = "https://github.com/${GROUP_ID}/${ARTIFACTOR_ID}-k8s.git"
+        K8S_GIT = "https://github.com/${ORG_ID}/${PRJ_ID}-k8s.git"
     }
     options {
         skipStagesAfterUnstable()
