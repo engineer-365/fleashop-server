@@ -26,7 +26,7 @@ pipeline {
         DOCKER_PRJ_FQ = "${DOCKER_REG}/${DOCKER_PRJ}"
         DOCKER_IMG_VER = "${PRJ_VER}-${COMMIT_ID}-${env.BUILD_ID}"
 
-        K8S_GIT = "https://github.com/${ORG_ID}/${PRJ_ID}-k8s.git"
+        K8S_GIT = "github.com/${ORG_ID}/${PRJ_ID}-k8s.git"
     }
     options {
         skipStagesAfterUnstable()
@@ -100,7 +100,7 @@ pipeline {
                         sh 'git config user.email "engineer365-builder@mail.engineer365.org"'
                         sh 'git config user.name "Engineer365 Builder"'
                         sh "git commit -a -m 'Updating test env image version to ${DOCKER_IMG_VER}'"
-                        sh "git push ${K8S_GIT}"
+                        sh "git push https://${USERPASS}@${K8S_GIT}"
                     }
                 }
             }
