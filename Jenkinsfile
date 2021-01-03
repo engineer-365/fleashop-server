@@ -17,10 +17,11 @@ pipeline {
         PRJ_VER = pom.getVersion()
         ORG_ID = pom.getGroupId()
 
-        COMMIT_ID = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-
+        //COMMIT_ID = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+        COMMIT_ID = GIT_COMMIT.take(7)
+    
         DOCKER_REG = 'docker.engineer365.org:40444'
-        DOCKER_REG_CRED = 'engineer365-builder@docker.engineer365.org'
+        DOCKER_REG_CRED = 'docker-engineer365-deployer'
         DOCKER_PRJ = "${ORG_ID}/${PRJ_ID}"
         DOCKER_PRJ_FQ = "${DOCKER_REG}/${DOCKER_PRJ}"
         DOCKER_IMG_VER = "${PRJ_VER}-${COMMIT_ID}-${env.BUILD_ID}"
@@ -32,23 +33,19 @@ pipeline {
         timestamps()
     }
     stages {
-        stage('Clean') {
+        stage('Clean then Compile') {
             steps {
                 sh './mvnw clean'
-            }
-        }
-        stage('Compile') {
-            steps {
                 sh './mvnw compile'
             }
         }
-        stage('Test') {
+        stage('Unit test then Integration test') {
             steps {
                 sh './mvnw verify'
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
             }
         }
-        stage('Quality') {
+        stage('Quality check') {
             steps {
                 // "jacoco" plugin
                 // See：
@@ -75,7 +72,7 @@ pipeline {
                 */
             }
         }
-        stage('Build Image') {
+        stage('Build docker image') {
         //    when {
         //        branch 'main'
         //    }
@@ -86,6 +83,24 @@ pipeline {
                         sh "docker tag ${DOCKER_PRJ_FQ}:latest ${DOCKER_PRJ_FQ}:${DOCKER_IMG_VER}"
                         sh "docker push ${DOCKER_PRJ_FQ}:${DOCKER_IMG_VER}"
                         sh "docker push ${DOCKER_PRJ_FQ}:latest"
+                    }
+                }
+            }
+        }
+        stage('Update k8s deployment for test env') {
+            steps {
+                dir('k8s') {
+                    git branch: 'main', credentialsId: 'github-engineer365-builder', url: 'https://github.com/engineer-365/fleashop-server-k8s.git'
+
+                    dir('overlays/test') {
+                        sh 'yq eval \'.images[].newTag="' + DOCKER_IMG_VER + '"\' kustomization.yaml -i'
+                    }
+
+                    withCredentials([usernameColonPassword(credentialsId: 'github-engineer365-builder', variable: 'USERPASS')]) {
+                        sh 'git config user.email "engineer365-builder@mail.engineer365.org"'
+                        sh 'git config user.name "Engineer365 Builder"'
+                        sh "git commit -a -m 'Updating test env image version to ${DOCKER_IMG_VER}'"
+                        sh "git push https://github.com/engineer-365/fleashop-server-k8s.git"
                     }
                 }
             }
