@@ -21,25 +21,25 @@ pipeline {
         COMMIT_ID = GIT_COMMIT.take(7)
     
         DOCKER_REG = 'docker.engineer365.org:40444'
-        DOCKER_REG_CRED = 'docker-engineer365-deployer'
+        DOCKER_REG_CRED = 'docker-engineer365-builder'
         DOCKER_PRJ = "${ORG_ID}/${PRJ_ID}"
         DOCKER_PRJ_FQ = "${DOCKER_REG}/${DOCKER_PRJ}"
         DOCKER_IMG_VER = "${PRJ_VER}-${COMMIT_ID}-${env.BUILD_ID}"
 
-        K8S_GIT = "github.com/${GROUP_ID}/${ARTIFACTOR_ID}-k8s.git"
+        K8S_GIT = "https://github.com/${GROUP_ID}/${ARTIFACTOR_ID}-k8s.git"
     }
     options {
         skipStagesAfterUnstable()
         timestamps()
     }
     stages {
-        stage('Clean then Compile') {
+        stage('Clean & Compile') {
             steps {
                 sh './mvnw clean'
                 sh './mvnw compile'
             }
         }
-        stage('Unit test then Integration test') {
+        stage('Unit test & Integration test') {
             steps {
                 sh './mvnw verify'
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
@@ -90,7 +90,7 @@ pipeline {
         stage('Update k8s deployment for test env') {
             steps {
                 dir('k8s') {
-                    git branch: 'main', credentialsId: 'github-engineer365-builder', url: 'https://github.com/engineer-365/fleashop-server-k8s.git'
+                    git branch: 'main', credentialsId: 'github-engineer365-builder', url: K8S_GIT
 
                     dir('overlays/test') {
                         sh 'yq eval \'.images[].newTag="' + DOCKER_IMG_VER + '"\' kustomization.yaml -i'
@@ -100,36 +100,11 @@ pipeline {
                         sh 'git config user.email "engineer365-builder@mail.engineer365.org"'
                         sh 'git config user.name "Engineer365 Builder"'
                         sh "git commit -a -m 'Updating test env image version to ${DOCKER_IMG_VER}'"
-                        sh "git push https://github.com/engineer-365/fleashop-server-k8s.git"
+                        sh "git push ${K8S_GIT}"
                     }
                 }
             }
         }
-        /*stage('Deploy') {
-        //    when {
-        //        branch 'main'
-        //    }
-            withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
-                sshPublisher(
-                    failOnError: true,
-                    publishers: [
-                        sshPublisherDesc(
-                            configName: 'staging',
-                            sshCredentials: [
-                                username: 'cloud_user',
-                                encryptedPassphrase: "$USERPASS"
-                            ], 
-                            transfers: [
-                                sshTransfer(
-                                    sourceFiles: 'src/**',
-                                    removePrefix: 'src/'
-                                )
-                            ]
-                        )
-                    ]
-                )
-            }
-        }*/
     }
     post {
         always {
