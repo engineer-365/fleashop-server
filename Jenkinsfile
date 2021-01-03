@@ -90,7 +90,7 @@ pipeline {
         stage('Update k8s deployment for test env') {
             steps {
                 dir('k8s') {
-                    git branch: 'main', credentialsId: 'github-engineer365-builder', url: K8S_GIT
+                    git branch: 'main', credentialsId: 'github-engineer365-builder', url: "https://${K8S_GIT}"
 
                     dir('overlays/test') {
                         sh 'yq eval \'.images[].newTag="' + DOCKER_IMG_VER + '"\' kustomization.yaml -i'
