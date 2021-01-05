@@ -25,6 +25,8 @@ package org.engineer365.platform.user.app.controller;
 
 import org.engineer365.platform.user.api.bean.Account;
 import org.engineer365.platform.user.api.bean.User;
+import org.engineer365.platform.user.api.req.AccountAuthReq;
+import org.engineer365.platform.user.api.req.CreateAccountByEmailReq;
 import org.engineer365.platform.user.api.req.CreateUserByEmailReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,12 +34,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import org.engineer365.platform.user.app.service.UserApiV1Service;
+import static org.engineer365.platform.user.api.UserApiV1.Path;
 
 /**
  * @author
@@ -46,7 +50,7 @@ import org.engineer365.platform.user.app.service.UserApiV1Service;
 @lombok.Getter
 @RestController
 @RequestMapping(
-    path = "platform/user/api/v1/rest",
+    path = Path.BASE,
     produces = MediaType.APPLICATION_JSON_VALUE,
     consumes = "*")
 public class UserApiV1RestController {
@@ -55,15 +59,39 @@ public class UserApiV1RestController {
     UserApiV1Service service;
 
 
-    @GetMapping(path = "user/_/{userId}")
+    @GetMapping(Path.getUser)
     public User getUser(@PathVariable @NotBlank String userId) {
         return getService().getUser(userId);
     }
 
 
-    @PostMapping(path = "user/createUserByEmail")
+    @PostMapping(Path.createUserByEmail)
     public Account createUserByEmail(@RequestBody @Valid CreateUserByEmailReq req) {
         return getService().createUserByEmail(req);
+    }
+
+
+    @PostMapping(Path.createAccountByEmail)
+    public Account createAccountByEmail(@RequestBody @Valid CreateAccountByEmailReq req) {
+        return getService().createAccountByEmail(req);
+    }
+
+
+    @GetMapping(Path.getAccount)
+    public Account getAccount(@PathVariable @NotBlank String accountId) {
+        return getService().getAccount(accountId);
+    }
+
+
+    @GetMapping(Path.getAccountByEmail)
+    public Account getAccountByEmail(@RequestParam @NotBlank String email) {
+        return getService().getAccountByEmail(email);
+    }
+
+
+    @PostMapping(Path.authByAccount)
+    public String authByAccount(@RequestBody @Valid AccountAuthReq req) {
+        return getService().authByAccount(req);
     }
 
 }
