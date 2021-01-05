@@ -67,8 +67,9 @@ public class UserApiV1IT extends IntegrationTestBase<UserApiV1> {
 
   @Test
   public void test_createUserByEmail() throws Exception {
-    var user = getApiClient().getUser("xxx");
-    Assertions.assertNull(user);
+    var api = getApiClient();
+
+    Assertions.assertNull(api.getUser("xxx"));
 
     var req = CreateUserByEmailReq.builder()
                 .name("engineer365-builder")
@@ -76,18 +77,18 @@ public class UserApiV1IT extends IntegrationTestBase<UserApiV1> {
                 .email("engineer365-builder@mail.engineer365.org")
                 .password("change me")
                 .build();
-    var account = getApiClient().createUserByEmail(req);
+    var account = api.createUserByEmail(req);
     
     Assertions.assertNotNull(account);
     Assertions.assertEquals(AccountType.EMAIL, account.getType());
     Assertions.assertEquals(req.getEmail(), account.getCredential());
 
-    user = getApiClient().getUser(account.getUserId());
+    var user = api.getUser(account.getUserId());
     Assertions.assertEquals(req.getFullName(), user.getFullName());
     Assertions.assertEquals(account.getId(), user.getPrimaryAccountId());
 
-    assertThat(getApiClient().getAccount(account.getId()), samePropertyValuesAs(account));
-    // Assertions.assertEquals(account, getApiClient().getAccountByEmail(req.getEmail()));
+    assertThat(api.getAccount(account.getId()), samePropertyValuesAs(account));
+    assertThat(api.getAccountByEmail(req.getEmail()), samePropertyValuesAs(account));
   }
 
 }

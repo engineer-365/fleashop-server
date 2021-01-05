@@ -63,7 +63,7 @@ public interface UserApiV1 {
     @RequestLine("GET "+ Path.BASE + Path.getAccount)
     Account getAccount(@Param String accountId);
 
-    @RequestLine("GET "+ Path.BASE + Path.getAccountByEmail)
+    @RequestLine("GET "+ Path.BASE + Path.getAccountByEmail + "?email={email}")
     Account getAccountByEmail(@Param String email);
 
 
