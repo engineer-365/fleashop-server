@@ -24,12 +24,14 @@
 package org.engineer365.common.rest;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
 import feign.Request;
 import feign.Logger.Level;
 
+@Component
 @ConfigurationProperties("engineer365.feign")
 @lombok.Getter
 @lombok.Setter
