@@ -24,7 +24,6 @@
 package org.engineer365.common.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 
@@ -57,14 +56,18 @@ public class FeignConfig {
   @Autowired
   MeterRegistry meterRegistry;
 
+  Feign.Builder builder;
+
   @PostConstruct
-  void init() {
+  public void init() {
     if (getProps().isMetricsEnabled()) {
       initMetrics();
     } 
+
+    setBuilder(createBuilder());
   }
 
-  void initMetrics() {
+  public void initMetrics() {
     if (getMeterRegistry() == null) {
       setMeterRegistry(buildDefaultMeterRegistry());
     }
@@ -74,8 +77,7 @@ public class FeignConfig {
     return new SimpleMeterRegistry(SimpleConfig.DEFAULT, Clock.SYSTEM);
   }
 
-  @Bean
-  public Feign.Builder builder() {
+  public Feign.Builder createBuilder() {
     var p = getProps();
 
     var r = Feign.builder();
@@ -115,8 +117,8 @@ public class FeignConfig {
     return builder;
   }
 
-  public <T> T buildClient(Class<T> clientClass, String uri) {
-    return builder().target(clientClass, uri);
+  public <T> T build(Class<T> clientClass, String uri) {
+    return getBuilder().target(clientClass, uri);
   }
 
 }
