@@ -14,6 +14,7 @@
   <description>Demo project for Spring Boot</description>
 
   <properties>
+    <feign.version>10.12</feign.version>
     <java.version>11</java.version>
     <testcontainers.version>1.15.0</testcontainers.version>
   </properties>
@@ -43,6 +44,57 @@
       <groupId>com.querydsl</groupId>
       <artifactId>querydsl-jpa</artifactId>
     </dependency>
+<!--
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>parent</artifactId>
+      <version>${feign.version}</version>
+      <type>pom</type>
+    </dependency>-->
+    
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-core</artifactId>
+      <version>${feign.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-jackson</artifactId>
+      <version>${feign.version}</version>
+    </dependency>
+      
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-micrometer</artifactId>
+      <version>${feign.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-slf4j</artifactId>
+      <version>${feign.version}</version>
+    </dependency>
+
+<!--
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-httpclient</artifactId>
+      <version>${feign.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-hc5</artifactId>
+      <version>${feign.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-mock</artifactId>
+      <version>${feign.version}</version>
+      <scope>test</scope>
+    </dependency>-->
 
     <dependency>
       <groupId>io.rest-assured</groupId>
