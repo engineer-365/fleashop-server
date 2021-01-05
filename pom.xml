@@ -15,7 +15,6 @@
 
   <properties>
     <java.version>11</java.version>
-    <springcloudfeign.version>3.0.0</springcloudfeign.version>
     <testcontainers.version>1.15.0</testcontainers.version>
   </properties>
 
@@ -113,13 +112,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
-    <!-- https://docs.spring.io/spring-cloud-openfeign/docs/3.0.0-SNAPSHOT/reference/html/ -->
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-openfeign</artifactId>
-      <version>${springcloudfeign.version}</version>
     </dependency>
 
     <!-- https://www.testcontainers.org/ -->
