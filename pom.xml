@@ -7,10 +7,10 @@
     <version>2.4.0</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
-  <groupId>org.engineer365</groupId>
-  <artifactId>fleashop</artifactId>
+  <groupId>engineer-365</groupId>
+  <artifactId>fleashop-server</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>fleashop</name>
+  <name>fleashop-server</name>
   <description>Demo project for Spring Boot</description>
 
   <properties>
@@ -199,6 +199,33 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin> -->
+      
     </plugins>
     
   </build>

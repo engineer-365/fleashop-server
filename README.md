@@ -1,5 +1,7 @@
 # 二手书店的服务器端
 
+[![Build Status](https://builder.engineer365.org:40443/buildStatus/icon?job=engineer-365%2Ffleashop-server)](https://builder.engineer365.org:40443/view/all/job/engineer-365/job/fleashop-server)
+
 ## 准备工作
   - 安装JDK 11
 
