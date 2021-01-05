@@ -30,4 +30,5 @@ source $dev_dir/common.sh
 
 echo 'Shutdown...'
 $_sudo docker-compose -f $dev_dir/docker-compose.yml down --remove-orphans
+$_sudo chown -R $USER:$USER $dev_dir
 echo ''
