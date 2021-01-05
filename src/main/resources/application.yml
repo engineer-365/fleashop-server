@@ -32,7 +32,7 @@ org.engineer365.platform:
         internal: ${ENGINEER365_PLATFORM_USER_API_HOST_INTERNAL:http://fleashop.engineer365.org}
         external: ${ENGINEER365_PLATFORM_USER_API_HOST_EXTERNAL:https://fleashop.engineer365.org}
 
-service:
+app:
   rdbms:
     url: jdbc:mysql://${MYSQL_HOST:mysql.fleashop.engineer365.org}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:fleashop}?${MYSQL_JDBC_OPTIONS}
     database: ${MYSQL_DATABASE:fleashop}

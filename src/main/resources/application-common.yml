@@ -97,21 +97,21 @@ spring:
   admin.enabled: true
 
   datasource:
-    url: ${service.rdbms.url}
-    username: ${service.rdbms.username}
-    password: ${service.rdbms.password}
+    url: ${app.rdbms.url}
+    username: ${app.rdbms.username}
+    password: ${app.rdbms.password}
 
   flyway:
     enabled: ${SPRING_FLYWAY_ENABLED:false}
     clean-disabled: true
-    url: ${service.rdbms.url}
-    user: ${service.rdbms.username}
-    password: ${service.rdbms.password}
-    schemas: ${service.rdbms.database}
+    url: ${app.rdbms.url}
+    user: ${app.rdbms.username}
+    password: ${app.rdbms.password}
+    schemas: ${app.rdbms.database}
 
   hikari:
-    maximumPoolSize: ${service.rdbms.pool-size:50}
-    minimumIdle: ${service.rdbms.pool-size:50}
+    maximumPoolSize: ${app.rdbms.pool-size:50}
+    minimumIdle: ${app.rdbms.pool-size:50}
 
   http.log-request-details: ${MANAGEMENT_TRACE_HTTP_LOG_BODY:false}
 
