@@ -86,6 +86,9 @@ public class RestTestBase {
      * @param uriVars - URL模板的参数占位符对应的参数值
      */
     public MockHttpServletRequestBuilder GET(String urlTemplate, Object... uriVars) {
+        if (!urlTemplate.startsWith("/")) {
+            urlTemplate = "/" + urlTemplate;
+        }
 		return MockMvcRequestBuilders
                 .get(urlTemplate, uriVars)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
@@ -100,6 +103,9 @@ public class RestTestBase {
      * @param uriVars - URL模板的参数占位符对应的参数值
      */
     public MockHttpServletRequestBuilder POST(Object requestContent, String urlTemplate, Object... uriVars) {
+        if (!urlTemplate.startsWith("/")) {
+            urlTemplate = "/" + urlTemplate;
+        }
 		return MockMvcRequestBuilders
                 .post(urlTemplate, uriVars)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

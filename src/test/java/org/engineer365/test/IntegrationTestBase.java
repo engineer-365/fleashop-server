@@ -23,40 +23,19 @@
  */
 package org.engineer365.test;
 
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.URI;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
-import org.engineer365.common.json.JacksonHelper;
-import org.springframework.http.MediaType;
+import org.engineer365.common.rest.FeignConfig;
+import org.engineer365.common.rest.FeignConfigProps;
 import org.testcontainers.containers.DockerComposeContainer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
-import io.restassured.RestAssured;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.builder.ResponseSpecBuilder;
-import io.restassured.config.ObjectMapperConfig;
-import io.restassured.config.RestAssuredConfig;
-import io.restassured.filter.log.ErrorLoggingFilter;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
-import io.restassured.mapper.factory.Jackson2ObjectMapperFactory;
-import io.restassured.parsing.Parser;
-import io.restassured.response.Response;
-import io.restassured.response.ValidatableResponse;
-import io.restassured.specification.RequestSpecification;
-import io.restassured.specification.ResponseSpecification;
 
 /**
  * 集成测试的基类。
@@ -73,10 +52,13 @@ import io.restassured.specification.ResponseSpecification;
  * 2) 连接testcontainers启动的待测试容器
  * 3）初始化数据：MySQL, ...
  *
+ * @Param T - feign client class
  */
 @lombok.Getter
 @lombok.Setter
-public abstract class IntegrationTestBase {
+public abstract class IntegrationTestBase<T> {
+
+  T apiClient;
 
   /**
    * 读取测试用系统环境变量
@@ -90,24 +72,29 @@ public abstract class IntegrationTestBase {
     }
   }
 
-  static {
-    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
-        ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {
-          public ObjectMapper create(Type cls, String charset) {
-            // 让RestAssured使用我们指定的jackson object mapper
-            return JacksonHelper.buildMapper();
-          }
-        }));
-
-    // 默认使用JSON content-type，用于当response里没有content-type时
-    RestAssured.defaultParser = Parser.JSON;
-  }
-
   /** RESTful API的基础路径 */
   final String basePath;
 
-  protected IntegrationTestBase(String basePath) {
+  protected IntegrationTestBase(Class<T> clientClass, String basePath) {
     this.basePath = basePath;
+    
+    this.apiClient = createApiClient(clientClass);
+  }
+
+  public T createApiClient(Class<T> clientClass) {
+    var feign = createFeignConfig();
+  
+    String uri = String.format("http://%s:%d", getServerHost(), getServerPort());
+    return feign.build(clientClass, uri);
+  }
+
+  public FeignConfig createFeignConfig() {
+    var r = new FeignConfig();
+
+    r.setProps(new FeignConfigProps());
+    r.init();
+
+    return r;
   }
 
   public TestContainersFactory containersFactory() {
@@ -156,40 +143,6 @@ public abstract class IntegrationTestBase {
     }
   }
 
-  public RequestSpecification requestSpecification() {
-    RequestSpecBuilder builder = new RequestSpecBuilder();
-
-    builder.setAccept(MediaType.APPLICATION_JSON_VALUE);
-    builder.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-    builder.setBaseUri(URI.create("http://" + getServerHost()));
-    builder.setPort(getServerPort());
-    builder.setBasePath(getBasePath());
-
-    builder.addFilter(new RequestLoggingFilter());
-    builder.addFilter(new ResponseLoggingFilter());
-    builder.addFilter(new ErrorLoggingFilter());
-
-    return builder.build();
-  }
-
-  public ResponseSpecification responseSpecification() {
-    ResponseSpecBuilder builder = new ResponseSpecBuilder();
-
-    builder.expectStatusCode(200);
-    builder.expectResponseTime(lessThanOrEqualTo(6L), TimeUnit.SECONDS);
-
-    return builder.build();
-  }
-
-  @SuppressWarnings("unused")
-  public Response assertResponse(Response response) {
-    ValidatableResponse va = response.then().spec(responseSpecification());
-    return response;
-  }
-
-  public RequestSpecification when() {
-    return RestAssured.given().spec(requestSpecification()).when();
-  }
+  
 
 }

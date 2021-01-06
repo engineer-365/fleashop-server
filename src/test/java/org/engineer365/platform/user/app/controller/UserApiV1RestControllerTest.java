@@ -28,6 +28,8 @@ import org.engineer365.test.RestTestBase;
 import org.engineer365.platform.user.api.bean.Account;
 import org.engineer365.platform.user.api.bean.User;
 import org.engineer365.platform.user.api.enums.AccountType;
+import org.engineer365.platform.user.api.req.AccountAuthReq;
+import org.engineer365.platform.user.api.req.CreateAccountByEmailReq;
 import org.engineer365.platform.user.api.req.CreateUserByEmailReq;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,6 +39,7 @@ import static org.mockito.Mockito.when;
 import java.util.Date;
 
 import org.springframework.test.context.ContextConfiguration;
+import org.engineer365.platform.user.api.UserApiV1.Path;
 import org.engineer365.platform.user.app.service.UserApiV1Service;
 import org.junit.jupiter.api.Test;
 
@@ -53,7 +56,7 @@ public class UserApiV1RestControllerTest extends RestTestBase {
 
     @Test
     void test_getUser() {
-        getThenExpectOk(null, "/platform/user/api/v1/rest/user/_/1234567890");
+        getThenExpectOk(null, Path.BASE + "/user/_/1234567890");
 
         String id = UuidHelper.shortUuid();
 
@@ -62,7 +65,7 @@ public class UserApiV1RestControllerTest extends RestTestBase {
 
         when(this.service.getUser(id)).thenReturn(user);
 
-        getThenExpectOk(user, "/platform/user/api/v1/rest/user/_/{userId}", id);
+        getThenExpectOk(user, Path.BASE + Path.getUser, id);
     }
 
     @Test
@@ -75,7 +78,61 @@ public class UserApiV1RestControllerTest extends RestTestBase {
 
         when(this.service.createUserByEmail(req)).thenReturn(account);
 
-        postThenExpectOk(req, account, "/platform/user/api/v1/rest/user/createUserByEmail");
+        postThenExpectOk(req, account, Path.BASE + Path.createUserByEmail);
+    }
+
+
+    @Test
+    void test_getAccount_got() {
+
+        getThenExpectOk(null, Path.BASE + Path.getAccount, UuidHelper.shortUuid());
+
+        String id = UuidHelper.shortUuid();
+
+        var account = Account.builder().id(id).type(AccountType.EMAIL).version(123).credential("engineers@engineer-365")
+                .createdAt(new Date()).updatedAt(new Date()).build();
+
+        when(this.service.getAccount(id)).thenReturn(account);
+
+        getThenExpectOk(account, Path.BASE + Path.getAccount, id);
+    }
+
+    @Test
+    void test_createAccountByEmail() {
+        var req = CreateAccountByEmailReq.builder().email("engineers@engineer-365").userId(UuidHelper.shortUuid())
+                .password("blah").build();
+
+        var account = Account.builder().id(UuidHelper.shortUuid()).credential(req.getEmail()).type(AccountType.EMAIL)
+                .userId(req.getUserId()).version(345).createdAt(new Date()).updatedAt(new Date()).build();
+
+        when(this.service.createAccountByEmail(req)).thenReturn(account);
+
+        postThenExpectOk(req, account, Path.BASE + Path.createAccountByEmail);
+    }
+
+    @Test
+    void test_getAccountByEmail() {
+        getThenExpectOk(null, Path.BASE + Path.getAccountByEmail + "?email=xxx");
+
+        String email = "engineers@engineer-365";
+
+        var account = Account.builder().id(UuidHelper.shortUuid()).type(AccountType.EMAIL).version(123)
+                .credential(email).createdAt(new Date()).updatedAt(new Date()).build();
+
+        when(this.service.getAccountByEmail(email)).thenReturn(account);
+
+        getThenExpectOk(account, Path.BASE + Path.getAccountByEmail + "?email={email}", email);
+    }
+
+    @Test
+    void test_authByAccount() {
+        var req = AccountAuthReq.builder().accountId(UuidHelper.shortUuid()).password("blah").build();
+
+        String pseudoToken = UuidHelper.shortUuid();
+
+        when(this.service.authByAccount(req)).thenReturn(pseudoToken);
+
+        postThenExpectOk(req, pseudoToken, Path.BASE + Path.authByAccount);
     }
 
 }

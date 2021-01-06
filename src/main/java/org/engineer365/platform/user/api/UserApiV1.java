@@ -29,22 +29,42 @@ import org.engineer365.platform.user.api.req.AccountAuthReq;
 import org.engineer365.platform.user.api.req.CreateAccountByEmailReq;
 import org.engineer365.platform.user.api.req.CreateUserByEmailReq;
 
+import feign.Param;
+import feign.RequestLine;
+
 /**
  *
  */
 public interface UserApiV1 {
 
+    public static interface Path {
+        public static String BASE = "platform/user/api/v1/rest";
+
+        public static String createUserByEmail = "/user/createUserByEmail";
+        public static String createAccountByEmail = "/account/createAccountByEmail";
+        public static String authByAccount = "/account/authByAccount";
+        public static String getUser = "/user/_/{userId}";
+        public static String getAccount = "/account/_/{accountId}";
+        public static String getAccountByEmail = "/account/getAccountByEmail";
+    }
+
+    @RequestLine("POST " + Path.BASE + Path.createUserByEmail)
     Account createUserByEmail(CreateUserByEmailReq req);
 
+    @RequestLine("POST "+ Path.BASE + Path.createAccountByEmail)
     Account createAccountByEmail(CreateAccountByEmailReq req);
 
+    @RequestLine("POST "+ Path.BASE + Path.authByAccount)
     String authByAccount(AccountAuthReq areq);
 
-    User getUser(String userId);
+    @RequestLine("GET "+ Path.BASE + Path.getUser)
+    User getUser(@Param String userId);
 
-    Account getAccount(String accountId);
+    @RequestLine("GET "+ Path.BASE + Path.getAccount)
+    Account getAccount(@Param String accountId);
 
-    Account getAccountByEmail(String email);
+    @RequestLine("GET "+ Path.BASE + Path.getAccountByEmail + "?email={email}")
+    Account getAccountByEmail(@Param String email);
 
 
 }
