@@ -6,7 +6,7 @@ pipeline {
     agent any
     environment {
         // "pipeline-utility-steps": read information from pom.xml into env variables
-        // See 
+        // See
         //  - https://github.com/jenkinsci/pipeline-utility-steps-plugin/blob/master/docs/STEPS.md
         //  - https://www.jenkins.io/doc/pipeline/steps/pipeline-utility-steps/
         // For waht readMavenPom() returns, see:
@@ -19,7 +19,7 @@ pipeline {
 
         //COMMIT_ID = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
         COMMIT_ID = GIT_COMMIT.take(7)
-    
+
         DOCKER_REG = 'docker.engineer365.org:40444'
         DOCKER_REG_CRED = 'docker-engineer365-builder'
         DOCKER_PRJ = "${ORG_ID}/${PRJ_ID}"
@@ -42,7 +42,7 @@ pipeline {
         stage('Unit test & Integration test') {
             steps {
                 sh './mvnw verify'
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
+                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
         }
         stage('Quality check') {
@@ -73,9 +73,9 @@ pipeline {
             }
         }
         stage('Build docker image') {
-        //    when {
-        //        branch 'main'
-        //    }
+            when {
+                branch 'main'
+            }
             steps {
                 script {
                     docker.withRegistry("https://" + DOCKER_REG, DOCKER_REG_CRED) {
@@ -88,6 +88,9 @@ pipeline {
             }
         }
         stage('Update k8s deployment for test env') {
+            when {
+                branch 'main'
+            }
             steps {
                 dir('k8s') {
                     git branch: 'main', credentialsId: 'github-engineer365-builder', url: "https://${K8S_GIT}"
